@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Activation | Bot Gateway</title>
+    <style>
+        :root {
+            --accent: #00ffcc;
+            --bg-dark: #05070f;
+            --card-bg: #0f1629;
+            --input-bg: #1b2545;
+            --text-muted: #8892b0;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-dark);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.1);
+            position: relative;
+        }
+
+        /* LOGO BOX */
+        .logo-wrapper {
+            margin-bottom: 25px;
+        }
+
+        .logo-wrapper img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            padding: 4px;
+            background: var(--bg-dark);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+            object-fit: cover;
+        }
+
+        h2 { font-weight: 600; margin: 10px 0 5px; letter-spacing: 0.5px; }
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 12px;
+            background: var(--input-bg);
+            color: #fff;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+
+        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--accent);
+            color: #05070f;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
+            font-size: 0.9rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 204, 0.5);
+        }
+
+        .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* STATUS SECTION */
+        #verify-section { margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; }
+        .session-id {
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            color: var(--accent);
+            margin: 15px 0;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+        .status-text { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
+
+        /* OVERLAY MODAL */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 7, 15, 0.98);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.5s;
+            z-index: 999;
+        }
+
+        .overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            width: 320px;
+            text-align: center;
+            border: 1px solid var(--accent);
+            box-shadow: 0 0 50px rgba(0, 255, 204, 0.2);
+        }
+
+        .price-tag {
+            font-size: 44px;
+            color: var(--accent);
+            margin: 20px 0;
+            font-weight: 800;
+        }
+
+        #tg-link { text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-wrapper">
+        <img src="logo.png" alt="Bot Logo">
+    </div>
+
+    <h2>Secure Access</h2>
+    <p class="subtitle">Enter your details to initiate activation</p>
+
+    <div id="form-group">
+        <input type="email" id="email-input" placeholder="Email Address">
+        <button onclick="runProcess()" id="start-btn" class="btn-primary">Continue</button>
+    </div>
+
+    <div id="verify-section" style="display:none;">
+        <p id="display-user" style="color:var(--accent); font-weight: 600; margin: 0;"></p>
+        <div class="session-id" id="session-id">------</div>
+        <p class="status-text" id="status-msg">Initializing...</p>
+    </div>
+</div>
+
+<div class="overlay" id="overlay">
+    <div class="modal">
+        <h3 style="margin:0;">Activation Locked</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Please complete payment to unlock your bot instance.</p>
+        <div class="price-tag">$70.00</div>
+        <a id="tg-link" href="#" target="_blank">
+            <button class="btn-primary">Activate via Telegram</button>
+        </a>
+    </div>
+</div>
+
+<script>
+    function runProcess() {
+        const email = document.getElementById("email-input").value.trim();
+        const startBtn = document.getElementById("start-btn");
+        
+        if (!email || !email.includes("@")) {
+            return alert("Please enter a valid email address.");
+        }
+
+        // Lock UI
+        startBtn.disabled = true;
+        document.getElementById("email-input").disabled = true;
+        document.getElementById("verify-section").style.display = "block";
+        document.getElementById("display-user").innerText = email.split("@")[0].toUpperCase();
+
+        // Generate Code
+        const code = "BOT-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+        document.getElementById("session-id").innerText = code;
+
+        const log = [
+            "Handshaking with secure server...",
+            "Encrypting tunnel protocol...",
+            "Verifying account status...",
+            "Access Restricted: Activation Required"
+        ];
+
+        let i = 0;
+        const interval = setInterval(() => {
+            document.getElementById("status-msg").innerText = log[i];
+            i++;
+
+            if (i === log.length) {
+                clearInterval(interval);
+                
+                setTimeout(() => {
+                    // 🚨 EDIT YOUR TELEGRAM USERNAME HERE
+                    const myTelegram = "hacyberglobaltech"; 
+                    
+                    const text = `Hello, I'm requesting activation.\n\n📧 Email: ${email}\n🔑 Session: ${code}\n💰 Price: $70.00`;
+                    const url = `https://t.me/${myTelegram}?text=${encodeURIComponent(text)}`;
+                    
+                    document.getElementById("tg-link").href = url;
+                    document.getElementById("overlay").classList.add("active");
+                }, 800);
+            }
+        }, 1200);
+    }
+</script>
+
+</body>
+</html>
