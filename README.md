@@ -1,4 +1,4 @@
-# 🔐 Hacyber Secure Access
+# 🔐 HacyberGlobalTech Secure Access 🤖
 
 A modern 2FA-style activation system with integrated billing flow, Telegram redirection, and SaaS-style UI.
 
@@ -14,7 +14,6 @@ A modern 2FA-style activation system with integrated billing flow, Telegram redi
 - ⚡ Instant Deployment (Vercel Ready)
 
 ---
-
 ## 🌐 Live Demo
 
 
