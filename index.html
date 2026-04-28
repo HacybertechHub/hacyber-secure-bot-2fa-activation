@@ -1,228 +1,519 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Activation | Bot Gateway</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🤖Bot‑Grabber Activation Portal</title>
     <style>
         :root {
-            --accent: #00ffcc;
-            --bg-dark: #05070f;
-            --card-bg: #0f1629;
-            --input-bg: #1b2545;
-            --text-muted: #8892b0;
+            --bg-main: #020617;
+            --card-bg: #020617;
+            --accent: #38bdf8;
+            --accent-strong: #0ea5e9;
+            --accent-purple: #6366f1;
+            --text-soft: #94a3b8;
+            --border-soft: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg-dark);
-            color: #fff;
+            padding: 0;
+            background: radial-gradient(circle at top, #0f172a 0, #020617 45%, #000 100%);
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+            color: white;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            background: var(--card-bg);
-            padding: 40px 30px;
-            border-radius: 24px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 204, 0.05);
-            border: 1px solid rgba(0, 255, 204, 0.1);
+            justify-content: center;
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* LOGO BOX */
-        .logo-wrapper {
-            margin-bottom: 25px;
-        }
-
-        .logo-wrapper img {
-            width: 120px;
-            height: 120px;
+        /* Background FX */
+        .bg-orbit {
+            position: fixed;
+            width: 520px;
+            height: 520px;
             border-radius: 50%;
-            border: 3px solid var(--accent);
-            padding: 4px;
-            background: var(--bg-dark);
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
-            object-fit: cover;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            box-shadow: 0 0 80px rgba(56, 189, 248, 0.25);
+            top: -120px;
+            right: -120px;
+            filter: blur(0.3px);
+            animation: orbit-spin 26s linear infinite;
+            pointer-events: none;
+            opacity: 0.7;
         }
 
-        h2 { font-weight: 600; margin: 10px 0 5px; letter-spacing: 0.5px; }
-        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; }
-
-        input {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(0, 255, 204, 0.2);
-            border-radius: 12px;
-            background: var(--input-bg);
-            color: #fff;
-            box-sizing: border-box;
-            outline: none;
-            transition: 0.3s;
-            font-size: 1rem;
+        .bg-glow {
+            position: fixed;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.18), transparent 60%);
+            bottom: -120px;
+            left: -80px;
+            filter: blur(2px);
+            pointer-events: none;
         }
 
-        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+        /* Layout */
+        .container {
+            width: 90%;
+            max-width: 420px;
+            margin: 40px auto;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
 
-        .btn-primary {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            background: var(--accent);
-            color: #05070f;
+        /* Card */
+        .card {
+            margin-top: 24px;
+            padding: 22px 20px 18px;
+            border-radius: 18px;
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.12), transparent 55%),
+                        radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.12), transparent 55%),
+                        rgba(15, 23, 42, 0.96);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            box-shadow:
+                0 18px 45px rgba(15, 23, 42, 0.9),
+                0 0 40px rgba(56, 189, 248, 0.18);
+        }
+
+        /* Logo + Title */
+        .logo {
+            width: 120px;
+            margin-bottom: 10px;
+            border-radius: 16px;
+            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.2), transparent 60%);
+            padding: 10px;
+        }
+
+        .logo-glow {
+            filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.7));
+            animation: logo-float 4.5s ease-in-out infinite;
+        }
+
+        .title {
+            font-size: 26px;
             font-weight: 700;
+            margin: 4px 0 4px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(120deg, #38bdf8, #22c55e, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: var(--text-soft);
+            letter-spacing: 0.12em;
             text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        /* Inputs */
+        .input-group {
+            text-align: left;
+            margin-bottom: 14px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        label {
+            font-size: 13px;
+            color: var(--text-soft);
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px 11px;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid var(--border-soft);
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, transform 0.08s ease;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: rgba(56, 189, 248, 0.9);
+            box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.6), 0 0 24px rgba(56, 189, 248, 0.35);
+            background: #020617;
+            transform: translateY(-1px);
+        }
+
+        /* Button */
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            border: none;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
-            font-size: 0.9rem;
+            color: #0b1120;
+            box-shadow:
+                0 14px 30px rgba(56, 189, 248, 0.45),
+                0 0 30px rgba(56, 189, 248, 0.55);
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 255, 204, 0.5);
+        .submit-btn:hover {
+            transform: translateY(-1px) scale(1.01);
+            filter: brightness(1.05);
+            box-shadow:
+                0 18px 40px rgba(56, 189, 248, 0.6),
+                0 0 40px rgba(56, 189, 248, 0.7);
         }
 
-        .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
+        .submit-btn:active {
+            transform: translateY(1px) scale(0.99);
+            box-shadow:
+                0 8px 18px rgba(15, 23, 42, 0.9),
+                0 0 18px rgba(56, 189, 248, 0.5);
+        }
 
-        /* STATUS SECTION */
-        #verify-section { margin-top: 25px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 25px; }
-        .session-id {
-            font-family: 'Courier New', monospace;
-            font-size: 24px;
+        /* Button pulse */
+        .pulse-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pulse-btn::after {
+            content: "";
+            position: absolute;
+            inset: -40%;
+            background: radial-gradient(circle, rgba(248, 250, 252, 0.35), transparent 60%);
+            opacity: 0;
+            transform: scale(0.4);
+            animation: btn-pulse 3.2s ease-out infinite;
+        }
+
+        /* Trust text */
+        .trust-text {
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--text-soft);
+        }
+
+        .trust-text span {
             color: var(--accent);
-            margin: 15px 0;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+            font-weight: 500;
         }
-        .status-text { font-size: 0.85rem; color: var(--text-muted); font-style: italic; }
 
-        /* OVERLAY MODAL */
-        .overlay {
+        /* Modal */
+        .modal {
+            display: none;
             position: fixed;
             inset: 0;
-            background: rgba(5, 7, 15, 0.98);
-            display: flex;
+            background: rgba(15, 23, 42, 0.92);
             justify-content: center;
             align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: 0.5s;
-            z-index: 999;
+            z-index: 20;
+            backdrop-filter: blur(10px);
         }
 
-        .overlay.active { opacity: 1; pointer-events: auto; }
-
-        .modal {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 24px;
-            width: 320px;
+        .modal-content {
+            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 60%),
+                        #020617;
+            padding: 22px 20px 18px;
+            border-radius: 18px;
+            width: 90%;
+            max-width: 360px;
             text-align: center;
-            border: 1px solid var(--accent);
-            box-shadow: 0 0 50px rgba(0, 255, 204, 0.2);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow:
+                0 20px 50px rgba(15, 23, 42, 0.95),
+                0 0 40px rgba(56, 189, 248, 0.4);
         }
 
-        .price-tag {
-            font-size: 44px;
-            color: var(--accent);
-            margin: 20px 0;
-            font-weight: 800;
+        .modal-title {
+            font-size: 20px;
+            margin-bottom: 4px;
         }
 
-        #tg-link { text-decoration: none; }
+        .modal-subtitle {
+            font-size: 13px;
+            color: var(--text-soft);
+            margin-bottom: 14px;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 11px;
+            margin-top: 10px;
+            border-radius: 999px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            color: #0b1120;
+            font-weight: 500;
+            transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+        }
+
+        .telegram {
+            background: linear-gradient(135deg, #229ED9, #38bdf8);
+            box-shadow: 0 10px 24px rgba(34, 158, 217, 0.55);
+        }
+
+        .whatsapp {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            box-shadow: 0 10px 24px rgba(34, 197, 94, 0.55);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        .close-modal {
+            margin-top: 12px;
+            background: #1f2937;
+            color: #e5e7eb;
+            box-shadow: none;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fade-in 0.7s ease-out forwards;
+        }
+
+        .card-float {
+            animation: card-float 6s ease-in-out infinite;
+        }
+
+        .modal-pop {
+            animation: modal-pop 0.22s ease-out;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes card-float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-4px);
+            }
+        }
+
+        @keyframes logo-float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @keyframes orbit-spin {
+            0% {
+                transform: rotate(0deg) translate3d(0, 0, 0);
+            }
+            100% {
+                transform: rotate(360deg) translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes btn-pulse {
+            0% {
+                opacity: 0.0;
+                transform: scale(0.4);
+            }
+            40% {
+                opacity: 0.55;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.4);
+            }
+        }
+
+        @keyframes modal-pop {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .container {
+                margin: 26px auto;
+            }
+
+            .card {
+                padding: 18px 16px 14px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="bg-orbit"></div>
+    <div class="bg-glow"></div>
 
-<div class="container">
-    <div class="logo-wrapper">
-        <img src="logo.png" alt="Bot Logo">
+    <div class="container fade-in">
+        <!-- If you want real logo, replace this div with <img src="logo.png" ...> -->
+        <div class="logo logo-glow"></div>
+
+        <h1 class="title gradient-text">Bot‑Grabber Activation Portal</h1>
+        <p class="subtitle">Secure • Fast • Verified</p>
+
+        <form id="activationForm" class="card card-float">
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" required />
+            </div>
+
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="email" required />
+            </div>
+
+            <div class="input-group">
+                <label>Phone</label>
+                <input type="tel" id="phone" required />
+            </div>
+
+            <div class="input-group">
+                <label>Country</label>
+                <input type="text" id="country" required />
+            </div>
+
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Platform</label>
+                    <select id="platform" required>
+                        <option value="">Select</option>
+                        <option value="Telegram">Telegram</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Plan</label>
+                    <select id="plan" required>
+                        <option value="">Select</option>
+                        <option value="Basic">Basic</option>
+                        <option value="Pro">Pro</option>
+                        <option value="Enterprise">Enterprise</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn pulse-btn">
+                Activate Now
+            </button>
+
+            <p class="trust-text">
+                Powered by <span>HACYBERGLOBALTECH</span>
+            </p>
+        </form>
     </div>
 
-    <h2>Secure Access</h2>
-    <p class="subtitle">Enter your details to initiate activation</p>
+    <!-- Modal -->
+    <div id="supportModal" class="modal">
+        <div class="modal-content modal-pop">
+            <h2 class="modal-title gradient-text">Select Support Channel</h2>
+            <p class="modal-subtitle">Your activation details will be auto‑sent.</p>
 
-    <div id="form-group">
-        <input type="email" id="email-input" placeholder="Email Address">
-        <button onclick="runProcess()" id="start-btn" class="btn-primary">Continue</button>
+            <button class="modal-btn telegram">
+                Continue on Telegram
+            </button>
+            <button class="modal-btn whatsapp">
+                Continue on WhatsApp
+            </button>
+
+            <button class="modal-btn close-modal">Cancel</button>
+        </div>
     </div>
 
-    <div id="verify-section" style="display:none;">
-        <p id="display-user" style="color:var(--accent); font-weight: 600; margin: 0;"></p>
-        <div class="session-id" id="session-id">------</div>
-        <p class="status-text" id="status-msg">Initializing...</p>
-    </div>
-</div>
+    <script>
+        const form = document.getElementById("activationForm");
+        const modal = document.getElementById("supportModal");
+        const closeModal = document.querySelector(".close-modal");
 
-<div class="overlay" id="overlay">
-    <div class="modal">
-        <h3 style="margin:0;">Activation Locked</h3>
-        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 10px;">Please complete payment to unlock your bot instance.</p>
-        <div class="price-tag">$70.00</div>
-        <a id="tg-link" href="#" target="_blank">
-            <button class="btn-primary">Activate via Telegram</button>
-        </a>
-    </div>
-</div>
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            modal.style.display = "flex";
+        });
 
-<script>
-    function runProcess() {
-        const email = document.getElementById("email-input").value.trim();
-        const startBtn = document.getElementById("start-btn");
-        
-        if (!email || !email.includes("@")) {
-            return alert("Please enter a valid email address.");
-        }
+        closeModal.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
 
-        // Lock UI
-        startBtn.disabled = true;
-        document.getElementById("email-input").disabled = true;
-        document.getElementById("verify-section").style.display = "block";
-        document.getElementById("display-user").innerText = email.split("@")[0].toUpperCase();
+        document.querySelector(".telegram").addEventListener("click", () => {
+            sendTo("telegram");
+        });
 
-        // Generate Code
-        const code = "BOT-" + Math.random().toString(36).substr(2, 6).toUpperCase();
-        document.getElementById("session-id").innerText = code;
+        document.querySelector(".whatsapp").addEventListener("click", () => {
+            sendTo("whatsapp");
+        });
 
-        const log = [
-            "Handshaking with secure server...",
-            "Encrypting tunnel protocol...",
-            "Verifying account status...",
-            "Access Restricted: Activation Required"
-        ];
+        function sendTo(channel) {
+            const name = document.getElementById("fullName").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const country = document.getElementById("country").value;
+            const platform = document.getElementById("platform").value;
+            const plan = document.getElementById("plan").value;
 
-        let i = 0;
-        const interval = setInterval(() => {
-            document.getElementById("status-msg").innerText = log[i];
-            i++;
+            const message = encodeURIComponent(
+                `🔐 Bot‑Grabber Activation Request\n\n` +
+                `👤 Name: ${name}\n` +
+                `📧 Email: ${email}\n` +
+                `📱 Phone: ${phone}\n` +
+                `🌍 Country: ${country}\n` +
+                `💠 Platform: ${platform}\n` +
+                `📦 Plan: ${plan}`
+            );
 
-            if (i === log.length) {
-                clearInterval(interval);
-                
-                setTimeout(() => {
-                    // 🚨 EDIT YOUR TELEGRAM USERNAME HERE
-                    const myTelegram = "hacyberglobaltech"; 
-                    
-                    const text = `Hello, I'm requesting activation.\n\n📧 Email: ${email}\n🔑 Session: ${code}\n💰 Price: $70.00`;
-                    const url = `https://t.me/${myTelegram}?text=${encodeURIComponent(text)}`;
-                    
-                    document.getElementById("tg-link").href = url;
-                    document.getElementById("overlay").classList.add("active");
-                }, 800);
+            if (channel === "telegram") {
+                window.location.href = `https://t.me/hacyberglobaltech?text=${message}`;
+            } else {
+                window.location.href = `https://wa.me/13609552434?text=${message}`;
             }
-        }, 1200);
-    }
-</script>
-
+        }
+    </script>
 </body>
 </html>
